@@ -1,0 +1,35 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}Agro Meteoro System Development - IT Agri{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6" style="text-align: center;">Agrometeorology System Development</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-gray-700 text-justify">
+            With its connections to various disciplines of research such as physical sciences, atmospheric sciences, agricultural sciences, 
+            and other sciences, agrometeorology has a broad scope. The study of agricultural sciences would be incomplete without consideration of agrometeorological knowledge and data. 
+            The goal of agrometeorology is to identify meteorological, climatological, and hydrological issues and apply this information to agricultural applications.
+             Agrometeorology studies cover a wide range of topics, from the soil surface layer to the depths to which roots can penetrate, and from the atmosphere to the heights at 
+             which plants live and thrive. For optimal crop growth, specific climatic conditions are essential. As a result, it tries to improve agricultural productivity by managing
+             the physical environment, forecasting weather accurately,
+             and estimating crop yields. IT Agri has its expertise to develop Agrometeorology System for institution, organisation etc.
+        </p>
+    </div>
+</div>
+{% endblock %}

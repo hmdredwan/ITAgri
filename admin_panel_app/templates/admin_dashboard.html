@@ -1,0 +1,135 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - IT Agri{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
+
+    <!-- {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %} -->
+
+
+     {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Carousel Slides</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ carousel_count }}</p>
+                <a href="{% url 'admin_panel_app:carousel_management' %}" class="text-green-600 hover:underline">Manage Slides</a>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Service Categories</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ category_count }}</p>
+                <a href="{% url 'admin_panel_app:category_management' %}" class="text-green-600 hover:underline">Manage Categories</a>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5h6a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V7a2 2 0 012-2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Services</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ service_count }}</p>
+                <a href="{% url 'admin_panel_app:service_management' %}" class="text-green-600 hover:underline">Manage Services</a>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Team Members</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ team_count }}</p>
+                <a href="{% url 'admin_panel_app:team_management' %}" class="text-green-600 hover:underline">Manage Team</a>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">About Content</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ about_count }}</p>
+                <a href="{% url 'admin_panel_app:about_management' %}" class="text-green-600 hover:underline">Manage About</a>
+            </div>
+        </div>
+        <!-- Joint Venture Card -->
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Joint Ventures</h3>
+                <p class="text-2xl font-bold text-gray-800">{{ joint_venture_count }}</p>
+                <a href="{% url 'admin_panel_app:joint_venture_management' %}" class="text-green-600 hover:underline">Manage Joint Ventures</a>
+            </div>
+        </div>
+
+        <!-- Crop Cycle card -->
+          <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM5 20h14v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Crop Cycle</h3>
+                <p class="text-2xl font-bold text-gray-800">{% if crop_cycle_exists %}1{% else %}0{% endif %}</p>
+                <a href="{% url 'admin_panel_app:crop_cycle_update' %}" class="text-green-600 hover:underline">Manage Crop Cycle</a>
+            </div>
+        </div>
+
+        <!-- Irrigation and Fertilizer -->
+         <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM5 20h14v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Irrigation</h3>
+                <p class="text-2xl font-bold text-gray-800">{% if irrigation_exists %}1{% else %}0{% endif %}</p>
+                <a href="{% url 'admin_panel_app:irrigation_update' %}" class="text-green-600 hover:underline">Manage Irrigation</a>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM5 20h14v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Extreme Weather</h3>
+                <p class="text-2xl font-bold text-gray-800">{% if extreme_weather_exists %}1{% else %}0{% endif %}</p>
+                <a href="{% url 'admin_panel_app:extreme_weather_update' %}" class="text-green-600 hover:underline">Manage Extreme Weather</a>
+            </div>
+        </div>
+
+        <!-- Contact Info Card -->
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Contact Info</h3>
+                <p class="text-2xl font-bold text-gray-800">{% if contact_info_exists %}1{% else %}0{% endif %}</p>
+                <a href="{% url 'admin_panel_app:contact_info_update' %}" class="text-green-600 hover:underline">Manage Contact Info</a>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM5 20h14v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2z"></path></svg>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Livestock</h3>
+                <p class="text-2xl font-bold text-gray-800">{% if livestock_exists %}1{% else %}0{% endif %}</p>
+                <a href="{% url 'admin_panel_app:livestock_update' %}" class="text-green-600 hover:underline">Manage Livestock</a>
+            </div>
+            </div>
+
+
+    </div>
+</div>
+{% endblock %}

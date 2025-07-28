@@ -1,0 +1,42 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}Board of Directors - IT Agri{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 bg-gray-100">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Board of Directors</h1>
+    {% if team_members %}
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse bg-white rounded-lg shadow-md">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-3 text-left text-gray-700">Name</th>
+                        <th class="p-3 text-left text-gray-700">Designation</th>
+                        <th class="p-3 text-left text-gray-700">Photo</th>
+                        <th class="p-3 text-left text-gray-700">Bio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in team_members %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3">{{ member.name }}</td>
+                            <td class="p-3">{{ member.role }}</td>
+                            <td class="p-3">
+                                {% if member.image %}
+                                    <img src="{{ member.image.url }}" alt="{{ member.name }}" class="w-16 h-16 object-cover rounded">
+                                {% else %}
+                                    <span class="text-gray-500">No Photo</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-3">{{ member.bio }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-gray-600 text-center">No board members available.</p>
+    {% endif %}
+</div>
+{% endblock %}

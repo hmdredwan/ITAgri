@@ -1,0 +1,118 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Carousel Management - IT Agri{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Carousel Management</h2>
+
+    <!-- {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %} -->
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Search and Filter -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+        <div class="flex items-center space-x 2 w-full sm:w-auto mb-4 sm:mb-0">
+            <input type="text" id="search-input" class="w-full sm:w-64 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600" placeholder="Search by title...">
+            <button id="search-button" class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">Search</button>
+        </div>
+        <select id="carousel-filter" class="p-2 border rounded-lg">
+            <option value="all">All Slides</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+    </div>
+
+    <!-- Carousel Table -->
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-700">Carousel Slides</h3>
+        <a href="{% url 'admin_panel_app:carousel_create' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Add Slide</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="p-3 text-left text-gray-700">Title</th>
+                    <th class="p-3 text-left text-gray-700">Description</th>
+                    <th class="p-3 text-left text-gray-700">Image</th>
+                    <th class="p-3 text-left text-gray-700">Active</th>
+                    <th class="p-3 text-left text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="carousel-table">
+                {% for slide in carousel_slides %}
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">{{ slide.title }}</td>
+                        <td class="p-3">{{ slide.description|truncatewords:10 }}</td>
+                        <td class="p-3">
+                            {% if slide.image %}
+                                <img src="{{ slide.image.url }}" alt="{{ slide.title }}" class="w-16 h-10 object-cover rounded">
+                            {% else %}
+                                <span class="text-gray-500">No Image</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3">{{ slide.is_active|yesno:"Yes,No" }}</td>
+                        <td class="p-3 flex space-x-2">
+                            <a href="{% url 'admin_panel_app:carousel_update' slide.pk %}" class="text-blue-600 hover:underline">Edit</a>
+                            <a href="{% url 'admin_panel_app:carousel_delete' slide.pk %}" class="text-red-600 hover:underline">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="p-3 text-center text-gray-600">No carousel slides found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JavaScript for Search and Filter -->
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const carouselTable = document.getElementById('carousel-table');
+
+        searchButton.addEventListener('click', () => {
+            const query = searchInput.value.toLowerCase();
+            carouselTable.querySelectorAll('tr').forEach(row => {
+                const title = row.cells[0].textContent.toLowerCase();
+                const description = row.cells[1].textContent.toLowerCase();
+                row.style.display = (title.includes(query) || description.includes(query)) ? '' : 'none';
+            });
+        });
+
+        const carouselFilter = document.getElementById('carousel-filter');
+        carouselFilter.addEventListener('change', () => {
+            const value = carouselFilter.value;
+            carouselTable.querySelectorAll('tr').forEach(row => {
+                const active = row.cells[3].textContent;
+                if (value === 'all') {
+                    row.style.display = '';
+                } else if (value === 'active' && active === 'Yes') {
+                    row.style.display = '';
+                } else if (value === 'inactive' && active === 'No') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</div>
+{% endblock %}

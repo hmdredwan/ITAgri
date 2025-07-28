@@ -1,0 +1,70 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}Service Bulletin - IT Agri{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Service Bulletin</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if service_bulletin %}
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div class="text-gray-600 text-justify whitespace-pre-wrap">{{ service_bulletin.description }}</div>
+            {% if service_bulletin.diagram %}
+                <div class="mt-4">
+                    <img src="{{ service_bulletin.diagram.url }}" alt="Service Bulletin Diagram" class="w-full rounded-lg">
+                    {% if service_bulletin.diagram_caption %}
+                        <b><p class="text-gray-600 text-center mt-2">{{ service_bulletin.diagram_caption }}</p></b>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if service_bulletin.pdf %}
+                <div class="mt-4">
+                    <embed src="{{ service_bulletin.pdf.url }}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="w-full h-[600px] rounded-lg">
+                    <p class="text-gray-600 text-center mt-2">
+                        <a href="{{ service_bulletin.pdf.url }}" target="_blank" class="text-green-600 hover:underline">Download PDF</a>
+                    </p>
+                </div>
+            {% endif %}
+            <!-- {% if service_bulletin.pdf %}
+                <div class="mt-4">
+                    <object data="{{ service_bulletin.pdf.url }}#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="w-full h-[600px] rounded-lg">
+                        <p class="text-gray-600 text-center mt-2">
+                            Your browser cannot display the PDF. Please <a href="{{ service_bulletin.pdf.url }}" target="_blank" class="text-green-600 hover:underline">download the PDF</a> to view it.
+                        </p>
+                    </object>
+                </div>
+            {% endif %} -->
+            <!-- {% if service_bulletin.pdf %}
+        <div class="mt-4">
+        <iframe src="http://127.0.0.1:8000{{ service_bulletin.pdf.url }}" width="100%" height="600px" style="border:none;" title="Service Bulletin PDF" onerror="console.error('Iframe failed to load PDF: http://127.0.0.1:8000{{ service_bulletin.pdf.url }}')">
+            This browser does not support PDFs. Please download the PDF to view it: 
+            <a href="http://127.0.0.1:8000{{ service_bulletin.pdf.url }}">Download PDF</a>
+        </iframe>
+        <p class="text-gray-600 text-center mt-2">
+            <a href="http://127.0.0.1:8000{{ service_bulletin.pdf.url }}" target="_blank" download class="text-green-600 hover:underline">Download PDF</a>
+            <span class="text-gray-500 text-sm"> (File: {{ service_bulletin.pdf.name }})</span>
+        </p>
+     </div>
+        {% endif %} -->
+        </div>
+    {% else %}
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <p class="text-gray-600">No Service Bulletin information available.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

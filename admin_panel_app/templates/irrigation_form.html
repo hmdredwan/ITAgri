@@ -1,0 +1,119 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Update Irrigation - IT Agri{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Update Irrigation</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.description.errors.as_text }}</p>
+                {% endif %}
+            </div>
+
+            <h3 class="text-xl font-semibold text-gray-700 mt-6">Images</h3>
+            <div id="image-inputs" class="space-y-4">
+                <div class="flex space-x-4">
+                    <input type="file" name="images" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                    <input type="text" name="image_captions" placeholder="Image Caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                </div>
+            </div>
+            <button type="button" onclick="addImageInput()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add Another Image</button>
+
+            {% if images %}
+                <h4 class="text-lg font-semibold text-gray-700 mt-6">Existing Images</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for image in images %}
+                        <div class="flex items-center space-x-2">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="w-24 h-24 object-cover rounded-lg">
+                            <div>
+                                <p class="text-gray-600">{{ image.caption }}</p>
+                                <label class="text-red-600">
+                                    <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <h3 class="text-xl font-semibold text-gray-700 mt-6">Videos</h3>
+            <div id="video-inputs" class="space-y-4">
+                <div class="flex space-x-4">
+                    <input type="file" name="videos" accept="video/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                    <input type="text" name="video_captions" placeholder="Video Caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                </div>
+            </div>
+            <button type="button" onclick="addVideoInput()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add Another Video</button>
+
+            {% if videos %}
+                <h4 class="text-lg font-semibold text-gray-700 mt-6">Existing Videos</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for video in videos %}
+                        <div class="flex items-center space-x-2">
+                            <video class="w-24 h-24 rounded-lg" controls>
+                                <source src="{{ video.video.url }}" type="video/mp4">
+                            </video>
+                            <div>
+                                <p class="text-gray-600">{{ video.caption }}</p>
+                                <label class="text-red-600">
+                                    <input type="checkbox" name="delete_videos" value="{{ video.id }}"> Delete
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="flex space-x-4 mt-6">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save</button>
+                <a href="{% url 'admin_panel_app:admin_dashboard' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addImageInput() {
+    const container = document.getElementById('image-inputs');
+    const newInput = document.createElement('div');
+    newInput.className = 'flex space-x-4';
+    newInput.innerHTML = `
+        <input type="file" name="images" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+        <input type="text" name="image_captions" placeholder="Image Caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+    `;
+    container.appendChild(newInput);
+}
+
+function addVideoInput() {
+    const container = document.getElementById('video-inputs');
+    const newInput = document.createElement('div');
+    newInput.className = 'flex space-x-4';
+    newInput.innerHTML = `
+        <input type="file" name="videos" accept="video/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+        <input type="text" name="video_captions" placeholder="Video Caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+    `;
+    container.appendChild(newInput);
+}
+</script>
+{% endblock %}

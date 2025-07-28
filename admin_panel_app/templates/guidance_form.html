@@ -1,0 +1,45 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Update Guidance - IT Agri Admin{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Update Guidance</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-md">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-4">
+            <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-4">
+            <label for="{{ form.pdf.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Upload PDF (optional)</label>
+            {{ form.pdf }}
+            {% if guidance.pdf %}
+                <p class="text-gray-600 mt-2">Current: {{ guidance.pdf.name }}</p>
+                <label class="inline-flex items-center mt-2">
+                    <input type="checkbox" name="delete_pdf" class="form-checkbox">
+                    <span class="ml-2 text-gray-700">Delete PDF</span>
+                </label>
+            {% endif %}
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save</button>
+        <a href="{% url 'admin_panel_app:admin_dashboard' %}" class="ml-2 text-gray-600 hover:underline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

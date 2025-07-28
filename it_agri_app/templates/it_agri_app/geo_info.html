@@ -1,0 +1,51 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}Geo Info - IT Agri{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6" style="text-align: center;">Geographic Information System (GIS)</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if geo_info %}
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <p class="text-gray-700">{{ geo_info.description|linebreaks }}</p>
+        </div>
+        {% if geo_info.images.all %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                {% for image in geo_info.images.all %}
+                    <div>
+                        <img src="{{ image.image.url }}" alt="{{ image.caption|default:'Geo Info Image' }}" class="w-full h-98 object-cover rounded-lg">
+                        {% if image.caption %}
+                            <p class="text-gray-600 mt-2 text-center">{{ image.caption }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if geo_info.pdf %}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Geo Info Document</h3>
+                <embed src="{{ geo_info.pdf.url }}" type="application/pdf" width="100%" height="600px" class="rounded-lg">
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <p class="text-gray-600">No Geo Info content available.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}Automation - IT Agri{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 " style="text-align: center;">Automation Solution</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if automation %}
+        <div class="bg-white p-9 rounded-lg shadow-md mb-6">
+            <div class="text-gray-600 text-justify whitespace-pre-wrap">{{ automation.description }}</div>
+            {% if automation.images.all %}
+                <div class="mt-4 space-y-4">
+                    {% for image in automation.images.all %}
+                        <div>
+                            <img src="http://127.0.0.1:8000{{ image.image.url }}" alt="{{ image.caption|default:'Automation Image' }}" class="w-full rounded-lg">
+                            {% if image.caption %}
+                                <p class="text-gray-600 text-center mt-2">{{ image.caption }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <p class="text-gray-600">No Automation information available.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

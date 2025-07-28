@@ -1,0 +1,39 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} About Content - IT Agri{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md mt-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">{% if form.instance.pk %}Edit{% else %}Add{% endif %} About Content</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Title</label>
+            {{ form.title }}
+        </div>
+        <div class="mb-4">
+            <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-4">
+            <label for="{{ form.images.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Image (Optional)</label>
+            {{ form.images }}
+            {% if form.instance.images %}
+                <img src="{{ form.instance.images.url }}" alt="Current Image" class="w-32 h-20 object-cover rounded mt-2">
+            {% endif %}
+        </div>
+        <div class="mb-4">
+            <label for="{{ form.videos.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Video (Optional)</label>
+            {{ form.videos }}
+            {% if form.instance.videos %}
+                <video src="{{ form.instance.videos.url }}" class="w-32 h-20 object-cover rounded mt-2" controls></video>
+            {% endif %}
+        </div>
+        <div class="flex space-x-2">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save</button>
+            <a href="{% url 'admin_panel_app:about_management' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

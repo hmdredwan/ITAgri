@@ -1,0 +1,88 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form_type == 'create' %}Add Joint Venture{% else %}Edit Joint Venture{% endif %} - IT Agri
+{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+        {% if form_type == 'create' %}Add New Joint Venture{% else %}Edit Joint Venture{% endif %}
+    </h2>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <div>
+            <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+            <input type="text" name="title" id="title" value="{{ joint_venture.title|default_if_none:'' }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+        </div>
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="description" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">{{ joint_venture.description|default_if_none:'' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Images</label>
+            <input type="file" name="images" multiple accept="image/*" class="mt-1 block w-full">
+            <div class="mt-2 space-y-2">
+                {% for i in "x"|ljust:"10" %}
+                <input type="text" name="image_captions" placeholder="Image caption {{ forloop.counter }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                {% endfor %}
+            </div>
+            {% if form_type == 'update' and images %}
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-700">Existing Images</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                    {% for image in images %}
+                    <div class="flex items-center space-x-2">
+                        <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="h-20 w-20 object-cover rounded">
+                        <div>
+                            <p class="text-sm text-gray-600">{{ image.caption|default:"No caption" }}</p>
+                            <label class="inline-flex items-center mt-2">
+                                <input type="checkbox" name="delete_images" value="{{ image.id }}" class="rounded border-gray-300">
+                                <span class="ml-2 text-sm text-red-600">Delete</span>
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Videos</label>
+            <input type="file" name="videos" multiple accept="video/*" class="mt-1 block w-full">
+            <div class="mt-2 space-y-2">
+                {% for i in "x"|ljust:"10" %}
+                <input type="text" name="video_captions" placeholder="Video caption {{ forloop.counter }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                {% endfor %}
+            </div>
+            {% if form_type == 'update' and videos %}
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold text-gray-700">Existing Videos</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                    {% for video in videos %}
+                    <div class="flex items-center space-x-2">
+                        <video src="{{ video.video.url }}" class="h-20 w-20 object-cover rounded" controls></video>
+                        <div>
+                            <p class="text-sm text-gray-600">{{ video.caption|default:"No caption" }}</p>
+                            <label class="inline-flex items-center mt-2">
+                                <input type="checkbox" name="delete_videos" value="{{ video.id }}" class="rounded border-gray-300">
+                                <span class="ml-2 text-sm text-red-600">Delete</span>
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                {% if form_type == 'create' %}Add Joint Venture{% else %}Update Joint Venture{% endif %}
+            </button>
+            <a href="{% url 'admin_panel_app:joint_venture_management' %}" class="ml-4 text-gray-600 hover:underline">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

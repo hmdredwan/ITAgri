@@ -1,0 +1,102 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Team Management - IT Agri{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Team Management</h2>
+
+    <!-- {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %} -->
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Search -->
+    <div class="flex items-center space-x-2 mb-6">
+        <input type="text" id="search-input" class="w-full sm:w-64 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600" placeholder="Search by name or role...">
+        <button id="search-button" class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">Search</button>
+    </div>
+
+    <!-- Team Members Table -->
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-700">Team Members</h3>
+        <a href="{% url 'admin_panel_app:team_member_create' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Add Team Member</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="p-3 text-left text-gray-700">Name</th>
+                    <th class="p-3 text-left text-gray-700">Designation</th>
+                    <th class="p-3 text-left text-gray-700">Photo</th>
+                    <th class="p-3 text-left text-gray-700">Bio</th>
+                    <th class="p-3 text-left text-gray-700">CV</th>
+                    <th class="p-3 text-left text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="team-table">
+                {% for member in team_members %}
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">{{ member.name }}</td>
+                        <td class="p-3">{{ member.role }}</td>
+                        <td class="p-3">
+                            {% if member.image %}
+                                <img src="{{ member.image.url }}" alt="{{ member.name }}" class="w-16 h-10 object-cover rounded">
+                            {% else %}
+                                <span class="text-gray-500">No Photo</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3">{{ member.bio|truncatewords:10 }}</td>
+                        <td class="p-3">
+                            {% if member.cv %}
+                                <a href="{{ member.cv.url }}" class="text-blue-600 hover:underline" target="_blank">View CV</a>
+                            {% else %}
+                                <span class="text-gray-500">No CV</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 flex space-x-2">
+                            <a href="{% url 'admin_panel_app:team_member_update' member.pk %}" class="text-blue-600 hover:underline">Edit</a>
+                            <a href="{% url 'admin_panel_app:team_member_delete' member.pk %}" class="text-red-600 hover:underline">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6" class="p-3 text-center text-gray-600">No team members found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JavaScript for Search -->
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const teamTable = document.getElementById('team-table');
+
+        searchButton.addEventListener('click', () => {
+            const query = searchInput.value.toLowerCase();
+            teamTable.querySelectorAll('tr').forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const role = row.cells[1].textContent.toLowerCase();
+                row.style.display = (name.includes(query) || role.includes(query)) ? '' : 'none';
+            });
+        });
+    </script>
+</div>
+{% endblock %}

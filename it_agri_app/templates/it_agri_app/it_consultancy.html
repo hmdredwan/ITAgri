@@ -1,0 +1,35 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}IT Consultancy - IT Agri{% endblock %}
+
+{% block content %}
+<section class="bg-gray-100 py-12">
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">IT Consultancy</h1>
+        <div class="bg-white p-8 rounded-lg shadow-md">
+            {% if it_consultancy.description %}
+                <div class="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">
+                    {{ it_consultancy.description|linebreaks|safe }}
+                </div>
+            {% else %}
+                <p class="text-gray-600 italic mb-8">No content available for IT Consultancy.</p>
+            {% endif %}
+            {% if it_consultancy.images.all %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    {% for image in it_consultancy.images.all %}
+                        <div class="relative">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="w-full h-64 object-cover rounded-lg">
+                            {% if image.caption %}
+                                <p class="text-gray-600 text-sm mt-2">{{ image.caption }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600 italic mt-8">No images available.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

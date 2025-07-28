@@ -1,0 +1,35 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}AI Solution - IT Agri{% endblock %}
+
+{% block content %}
+<section class="bg-gray-100 py-12">
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Artificial Intelligence (AI) Solution</h1>
+        <div class="bg-white p-8 rounded-lg shadow-md">
+            {% if ai_solution.description %}
+                <div class="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">
+                    {{ ai_solution.description|linebreaks|safe }}
+                </div>
+            {% else %}
+                <p class="text-gray-600 italic mb-8">No content available for AI Solution.</p>
+            {% endif %}
+            {% if ai_solution.images.all %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    {% for image in ai_solution.images.all %}
+                        <div class="relative">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="w-full h-64 object-cover rounded-lg">
+                            {% if image.caption %}
+                                <p class="text-gray-600 text-sm mt-2">{{ image.caption }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600 italic mt-8">No images available.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

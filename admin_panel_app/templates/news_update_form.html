@@ -1,0 +1,46 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Manage News Updates{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Manage News Updates</h1>
+    
+    <!-- Form to add/edit news update -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">
+            {% if form.instance.pk %}Edit News Update{% else %}Add News Update{% endif %}
+        </h2>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Save</button>
+            {% if form.instance.pk %}
+                <a href="{% url 'admin_panel_app:news_update_manage' %}" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">Cancel</a>
+            {% endif %}
+        </form>
+    </div>
+    
+    <!-- List of existing news updates -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Existing News Updates</h2>
+        {% if news_updates %}
+            <ul class="space-y-4">
+                {% for news in news_updates %}
+                    <li class="flex justify-between items-center border-b py-2">
+                        <span>{{ news.title }}</span>
+                        <div>
+                            <a href="{% url 'admin_panel_app:news_update_edit' news.pk %}" class="text-blue-600 hover:underline">Edit</a>
+                            <a href="{% url 'admin_panel_app:news_update_delete' news.pk %}" class="text-red-600 hover:underline ml-4">Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-600 italic">No news updates available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+```

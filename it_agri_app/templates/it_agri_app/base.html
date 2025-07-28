@@ -1,0 +1,714 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IT Agri Project{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for nested dropdowns */
+
+        
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-menu .dropdown:hover .dropdown-submenu,
+        .dropdown-menu .dropdown .dropdown-submenu:hover {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            top: 0;
+            left: calc(100% - 4px);
+        }
+
+        .dropdown-menu,
+        .dropdown-submenu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transition-delay: 0.1s;
+        }
+
+        .dropdown:hover .dropdown-menu,
+        .dropdown-menu .dropdown:hover .dropdown-submenu,
+        .dropdown-menu .dropdown .dropdown-submenu:hover {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-menu li,
+        .dropdown-submenu li {
+            margin: 0;
+            padding: 0;
+        }
+
+        .dropdown-menu a,
+        .dropdown-submenu a {
+            display: block;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+
+            .dropdown-menu,
+            .dropdown-submenu {
+                display: none;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .dropdown.active .dropdown-menu,
+            .dropdown.active .dropdown-submenu {
+                display: block;
+            }
+
+            /* Stack nav rows vertically on mobile */
+            .nav-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Carousel styles */
+        .carousel-item {
+            display: none;
+        }
+
+        .carousel-item.active {
+            display: block;
+        }
+
+        nav {
+            z-index: 100;
+        }
+
+        .dropdown-menu,
+        .dropdown-submenu {
+            z-index: 101;
+        }
+
+        /* Ensure nested dropdowns stay within the screen */
+        .dropdown-submenu {
+            top: 0;
+            left: 100%;
+            right: auto;
+            min-width: 16rem;
+            white-space: normal;
+        }
+
+        .dropdown-submenu.adjust-left {
+            left: auto !important;
+            right: 100% !important;
+        }
+
+        /* Marquee styles */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            background-color: #000000;
+            padding: 0.5rem 0;
+            width: 100%;
+            position: relative;
+        }
+
+        .marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+            will-change: transform;
+        }
+
+        .marquee-item {
+            display: inline-block;
+            margin-right: 2rem;
+        }
+
+        .marquee:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(calc(100% + 50vw));
+            }
+
+            /* Start fully off-screen to the right */
+            100% {
+                transform: translateX(-100%);
+            }
+
+            /* Move to left */
+        }
+
+        /* Navbar second row */
+        .nav-row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-row {
+                align-items: center;
+            }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-gray-100 font-sans pt-20">
+
+    {% if news_updates %}
+    <div class="marquee-container">
+        <div class="marquee">
+            {% for news in news_updates %}
+            <span class="marquee-item">
+
+                <a href="{% url 'it_agri_app:news_update_pdf' news.pk %}" class="text-[#FACC15] hover:underline"
+                    target="_blank">
+                    {{ news.title }}
+                </a>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center text-gray-500 py-4">No news updates available.</div>
+    {% endif %}
+    {% if news_updates %}
+    <div class="marquee-container">
+        <div class="marquee">
+            {% for news in news_updates %}
+            <span class="marquee-item">
+                <a href="{% url 'it_agri_app:news_update_pdf' news.pk %}" class="text-[#FACC15] hover:underline"
+                    target="_blank">
+                    {{ news.title }}
+                </a>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Navbar -->
+    <nav class="bg-green-700 text-white p-4 shadow-md fixed top-0 w-full">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-4">
+                <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="h-20 w-20"
+                    onerror="this.src='https://via.placeholder.com/40'">
+                <div class="flex-row">
+
+                    <span class="text-xl font-bold" style="letter-spacing: 2px;font-size: xx-large;">ITAgri </span><br>
+                    <span class="text-xl font-bold" style="letter-spacing: 2px;font-size: large;"> Weather Solution
+                        Private Ltd</span>
+                </div>
+            </div>
+
+            <!-- Hamburger Menu (Mobile) -->
+            <button id="menu-toggle" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+
+            <!-- Nav Items -->
+            <div class="nav-row hidden md:flex">
+                <ul id="nav-menu" class="flex space-x-6 items-center ">
+                    <li><a href="{% url 'it_agri_app:home' %}" class="hover:text-[#EEC314]">Home</a></li>
+                    <li><a href="{% url 'it_agri_app:about' %}" class="hover:text-[#EEC314]">About</a></li>
+                    <li class="dropdown relative">
+                        <a href="#" class="hover:text-[#EEC314] flex items-center">Company Management <svg
+                                class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg></a>
+                        <ul
+                            class="dropdown-menu hidden absolute bg-green-600 text-white rounded-md shadow-lg mt-2 w-64">
+                            <li><a href="{% url 'it_agri_app:board_of_directors' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Board of
+                                    Directors</a></li>
+                            <li><a href="{% url 'it_agri_app:joint_venture' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Joint Venture</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown relative">
+                        <a href="{% url 'it_agri_app:services' %}" class="hover:text-[#EEC314] flex items-center">Major
+                            Services <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg></a>
+                        <ul
+                            class="dropdown-menu hidden absolute bg-green-600 text-white rounded-md shadow-lg mt-2 w-64">
+                            <li class="dropdown relative">
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314] flex items-center">Agromet
+                                    Advisory <svg class="w-4 h-4 ml-auto" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg></a>
+                                <ul
+                                    class="dropdown-submenu hidden absolute bg-green-600 text-white rounded-md shadow-lg w-64 right-0 top-0">
+                                    <li><a href="{% url 'it_agri_app:crop_cycle' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Land
+                                            Preparation, Sowing/Transplanting and Harvesting</a></li>
+                                    <li><a href="{% url 'it_agri_app:irrigation' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Irrigation
+                                            and Fertilizer/Pesticide Application</a></li>
+                                    <li><a href="{% url 'it_agri_app:extreme_weather' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Extreme
+                                            Weather Conditions</a></li>
+                                    <li><a href="{% url 'it_agri_app:livestock' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Livestock,
+                                            Poultry and Fisheries</a></li>
+                                    <li><a href="{% url 'it_agri_app:service_bulletin' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Service
+                                            Bulletin</a></li>
+                                    <li><a href="{% url 'it_agri_app:automation' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Automation
+                                            Solution</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown relative">
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314] flex items-center">Products
+                                    <svg class="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg></a>
+                                <ul
+                                    class="dropdown-submenu hidden absolute bg-green-600 text-white rounded-md shadow-lg w-64 left-full top-0">
+                                    <li><a href="{% url 'it_agri_app:agromet_products' %}"
+                                            class="block px-4 py-2 hover:bg-green-500">Agromet Products</a></li>
+                                    <li><a href="{% url 'it_agri_app:crop_weather_calender' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Crop Weather
+                                            Calendar</a></li>
+                                    <li><a href="{% url 'it_agri_app:remote_sensing' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Remote
+                                            Sensing Products</a></li>
+                                    <li><a href="{% url 'it_agri_app:geo_info' %}"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Geographic
+                                            Information System (GIS)</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{% url 'it_agri_app:pest_disease' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Pest and Disease
+                                    Forewarning Technique</a></li>
+                            <li><a href="{% url 'it_agri_app:guidance' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Participatory
+                                    Climate & Weather Guidance</a></li>
+                            <li><a href="{% url 'it_agri_app:agromet_adaption' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Agromet Adaption
+                                    Strategy</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown relative">
+                        <a href="{% url 'it_agri_app:services' %}" class="hover:text-[#EEC314]  flex items-center">Other
+                            Services <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg></a>
+                        <ul
+                            class="dropdown-menu hidden absolute bg-green-600 text-white rounded-md shadow-lg mt-2 w-64">
+                            <li><a href="{% url 'it_agri_app:weather_station' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Installation and
+                                    Maintenance of Weather Station</a></li>
+                            <li><a href="{% url 'it_agri_app:agro_meteoro_system_development' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Agrometeorology
+                                    System Development</a></li>
+                            <li><a href="{% url 'it_agri_app:web_portal' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Webportal
+                                    Development</a></li>
+                            <li><a href="{% url 'it_agri_app:web_development' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Web Development</a>
+                            </li>
+                            <li><a href="{% url 'it_agri_app:ai_solution' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">AI Solutions</a>
+                            </li>
+                            <li><a href="{% url 'it_agri_app:it_consultancy' %}"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">IT Consultancy</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'it_agri_app:contact' %}" class="hover:text-[#EEC314]">Contact</a></li>
+
+                    <li class="dropdown relative">
+                        <a href="#" class="hover:text-[#EEC314] flex items-center">Resources <svg class="w-4 h-4 ml-1"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg></a>
+                        <ul
+                            class="dropdown-menu hidden absolute bg-green-600 text-white rounded-md shadow-lg mt-2 w-64">
+                            <li><a href="/media/Brochure/Product Catalogue-NC.pdf"
+                                    class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Product
+                                    Catalogue</a></li>
+
+                            <li class="dropdown relative">
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-green-500 flex hover:text-[#EEC314] items-center">Brochure
+                                    <svg class="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg></a>
+                                <ul
+                                    class="dropdown-submenu hidden absolute bg-green-600 text-white rounded-md shadow-lg w-64 right-0 top-0">
+                                    <li><a href="/media/Brochure/Full Length Brochure.pdf"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Full Length
+                                            Brochure</a></li>
+                                    <li><a href="/media/Brochure/Compresed Brochure.pdf"
+                                            class="block px-4 py-2 hover:bg-green-500 hover:text-[#EEC314]">Compressed
+                                            Brochure</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li><a href="{% url 'admin_panel_app:admin_login' %}"
+                            class="hover:text-[#EEC314] flex items-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <g id="user-admin">
+                                    <path d="M22.3,16.7l1.4-1.4L20,11.6l-5.8,5.8c-0.5-0.3-1.1-0.4-1.7-0.4C10.6,17,9,18.6,9,20.5s1.6,3.5,3.5,3.5s3.5-1.6,3.5-3.5
+	                        	c0-0.6-0.2-1.2-0.4-1.7l1.9-1.9l2.3,2.3l1.4-1.4l-2.3-2.3l1.1-1.1L22.3,16.7z M12.5,22c-0.8,0-1.5-0.7-1.5-1.5s0.7-1.5,1.5-1.5
+		                        s1.5,0.7,1.5,1.5S13.3,22,12.5,22z"></path>
+                                    <path
+                                        d="M2,19c0-3.9,3.1-7,7-7c2,0,3.9,0.9,5.3,2.4l1.5-1.3c-0.9-1-1.9-1.8-3.1-2.3C14.1,9.7,15,7.9,15,6c0-3.3-2.7-6-6-6
+	                    	S3,2.7,3,6c0,1.9,0.9,3.7,2.4,4.8C2.2,12.2,0,15.3,0,19v5h8v-2H2V19z M5,6c0-2.2,1.8-4,4-4s4,1.8,4,4s-1.8,4-4,4S5,8.2,5,6z">
+                                    </path>
+                                </g>
+                            </svg>
+                        </a>
+                    </li>
+                    </ul>
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- News Updates Marquee -->
+    <!-- Debug -->
+    <!-- <div>Debug: {{ news_updates|length }} news updates</div> -->
+
+    <!-- {% if news_updates %}
+    <div class="marquee-container">
+        <div class="marquee">
+            {% for news in news_updates %}
+            <span class="marquee-item">
+
+                <a href="{% url 'it_agri_app:news_update_pdf' news.pk %}" class="text-[#FACC15] hover:underline"
+                    target="_blank">
+                    {{ news.title }}
+                </a>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center text-gray-500 py-4">No news updates available.</div>
+    {% endif %}
+    {% if news_updates %}
+    <div class="marquee-container">
+        <div class="marquee">
+            {% for news in news_updates %}
+            <span class="marquee-item">
+                <a href="{% url 'it_agri_app:news_update_pdf' news.pk %}" class="text-[#FACC15] hover:underline"
+                    target="_blank">
+                    {{ news.title }}
+                </a>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %} -->
+
+
+    <!-- Slider Carousel -->
+    <section class="relative w-full h-96">
+        <div id="carousel" class="flex w-full h-full">
+            {% for slide in carousel_slides %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %} w-full h-full">
+                {% if slide.image %}
+                <img src="{{ slide.image.url }}" alt="{{ slide.title }}" class="w-full h-full object-cover">
+                {% else %}
+                <img src="https://via.placeholder.com/1200x400?text={{ slide.title }}" alt="{{ slide.title }}"
+                    class="w-full h-full object-cover">
+                {% endif %}
+                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20">
+                    <div class="text-center text-white">
+                        <h2 class="text-3xl md:text-4xl font-bold">{{ slide.title }}</h2>
+                        <p class="text-lg mt-2">{{ slide.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="carousel-item active w-full h-full">
+                <img src="{% static 'images/h1.jpeg' %}" alt="Default Slide" class="w-full h-full object-cover"
+                    onerror="this.src='https://via.placeholder.com/1200x400?text=Default+Slide'">
+                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div class="text-center text-white">
+                        <h2 class="text-3xl md:text-4xl font-bold">Welcome to IT Agri</h2>
+                        <p class="text-lg mt-2">Innovative IT solutions for sustainable farming.</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Carousel Controls -->
+        <button id="prev-slide"
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-2 rounded-full hover:bg-green-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        <button id="next-slide"
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-2 rounded-full hover:bg-green-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+        <!-- Carousel Indicators -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {% for slide in carousel_slides %}
+            <button
+                class="carousel-indicator w-3 h-3 rounded-full bg-white {% if forloop.first %}bg-green-600{% else %}opacity-50{% endif %} hover:opacity-100"
+                data-slide="{{ forloop.counter0 }}"></button>
+            {% empty %}
+            <button class="carousel-indicator w-3 h-3 rounded-full bg-green-600" data-slide="0"></button>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Main Content Block -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Quick Links Section -->
+    <!-- <section class="py-10 bg-green-50">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center text-green-800 mb-8">Quick Links</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <a href="{% url 'it_agri_app:services' %}" class="bg-white p-6 rounded-lg shadow-md text-center hover:bg-green-100">
+                    <h3 class="text-xl font-semibold text-green-700">Agromet Advisory</h3>
+                    <p class="text-gray-600">Weather-based guidance for farming.</p>
+                </a>
+                <a href="{% url 'it_agri_app:services' %}" class="bg-white p-6 rounded-lg shadow-md text-center hover:bg-green-100">
+                    <h3 class="text-xl font-semibold text-green-700">Services</h3>
+                    <p class="text-gray-600">Explore our range of IT solutions.</p>
+                </a>
+                <a href="{% url 'it_agri_app:about' %}" class="bg-white p-6 rounded-lg shadow-md text-center hover:bg-green-100">
+                    <h3 class="text-xl font-semibold text-green-700">About Us</h3>
+                    <p class="text-gray-600">Learn about our mission and team.</p>
+                </a>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- Quick Links Section -->
+    <section class="py-6 bg-[#44525D]">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Quick Links</h2>
+            <div class="flex flex-row gap-8 overflow-x-auto flex-nowrap snap-x snap-mandatory">
+                <!-- First Column: Logos and Names -->
+                <div class="flex-2 flex flex-row items-center gap-4">
+                    <div class="flex items-center space-x-2 ml-4">
+                        <img src="{% static 'images/logo.jpg' %}" alt="ITAgri Logo" class="h-20 w-20 object-contain"
+                            onerror="this.src='https://via.placeholder.com/80?text=ITAgri'">
+                        <span class="text-lg font-semibold text-white">ITAgri</span>
+                    </div>
+                    <!-- <div class="flex items-center space-x-2">
+                        <img src="{% static 'images/company2_logo.jpg' %}" alt="Web Soft BD Logo" class="h-16 w-16 object-contain" onerror="this.src='https://via.placeholder.com/64?text=Web+Soft+BD'">
+                        <span class="text-lg font-semibold text-white">Web Soft BD</span>
+                    </div> -->
+                </div>
+                <!-- Second Column: Agromet Advisory -->
+                <a href="{% url 'it_agri_app:services' %}"
+                    class="flex-1 text-center text-lg font-semibold text-white hover:text-green-200">Agromet
+                    Advisory</a>
+                <!-- Third Column: Services -->
+                <a href="{% url 'it_agri_app:services' %}"
+                    class="flex-1 text-center text-lg font-semibold text-white hover:text-green-200">Services</a>
+                <!-- Fourth Column: About Us -->
+                <a href="{% url 'it_agri_app:about' %}"
+                    class="flex-1 text-center text-lg font-semibold text-white hover:text-green-200">About Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>© 2025 IT AGRI All rights reserved.</p>
+            <p>Powered by <span style="font-weight: 800;"><a href="https://www.websoftbd.net/"
+                        class="hover:text-green-200">WEB SOFT BD</a></span></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Navbar and Carousel -->
+  <script>
+    // Ensure DOM is fully loaded before running script
+    document.addEventListener('DOMContentLoaded', () => {
+        // Navbar Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        // Debug: Check if elements exist
+        if (!menuToggle || !navMenu) {
+            console.error('Error: menu-toggle or nav-menu element not found');
+            return;
+        }
+
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('hidden');
+            document.querySelectorAll('.nav-row ul').forEach(ul => {
+                ul.classList.toggle('hidden');
+            });
+            // Debug: Log state change
+            console.log('Menu toggle clicked, hidden class:', navMenu.classList.contains('hidden'));
+        });
+
+        // Toggle dropdowns on mobile
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', (e) => {
+                if (window.innerWidth < 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                    // Debug: Log dropdown state
+                    console.log('Dropdown clicked, active class:', dropdown.classList.contains('active'));
+                }
+            });
+        });
+
+        // Enhance desktop nested dropdowns with JavaScript
+        if (window.innerWidth >= 768) {
+            dropdowns.forEach(dropdown => {
+                const menu = dropdown.querySelector('.dropdown-menu');
+                const subMenus = dropdown.querySelectorAll('.dropdown-submenu');
+
+                dropdown.addEventListener('mouseenter', () => {
+                    if (menu) {
+                        menu.style.display = 'block';
+                        menu.style.opacity = '1';
+                        menu.style.visibility = 'visible';
+                    }
+                });
+
+                dropdown.addEventListener('mouseleave', () => {
+                    if (menu) {
+                        setTimeout(() => {
+                            if (!dropdown.matches(':hover') && !menu.matches(':hover')) {
+                                menu.style.display = 'none';
+                                menu.style.opacity = '0';
+                                menu.style.visibility = 'hidden';
+                            }
+                        }, 200);
+                    }
+                });
+
+                subMenus.forEach(subMenu => {
+                    const parentDropdown = subMenu.closest('.dropdown');
+                    parentDropdown.addEventListener('mouseenter', () => {
+                        subMenu.style.display = 'block';
+                        subMenu.style.opacity = '1';
+                        subMenu.style.visibility = 'visible';
+                    });
+
+                    parentDropdown.addEventListener('mouseleave', () => {
+                        setTimeout(() => {
+                            if (!parentDropdown.matches(':hover') && !subMenu.matches(':hover')) {
+                                subMenu.style.display = 'none';
+                                subMenu.style.opacity = '0';
+                                subMenu.style.visibility = 'hidden';
+                            }
+                        }, 200);
+                    });
+                });
+            });
+        }
+
+        // Carousel Functionality
+        const carousel = document.getElementById('carousel');
+        const items = carousel.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('.carousel-indicator');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            items.forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+                indicators[i].classList.toggle('bg-green-600', i === index);
+                indicators[i].classList.toggle('opacity-50', i !== index);
+            });
+        }
+
+        document.getElementById('next-slide').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % items.length;
+            showSlide(currentIndex);
+        });
+
+        document.getElementById('prev-slide').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            showSlide(currentIndex);
+        });
+
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                showSlide(currentIndex);
+            });
+        });
+
+        // Auto-slide every 5 seconds
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % items.length;
+            showSlide(currentIndex);
+        }, 5000);
+
+        // Adjust dropdown submenu position to stay within viewport
+        document.querySelectorAll('.dropdown-submenu').forEach(submenu => {
+            submenu.parentElement.addEventListener('mouseenter', () => {
+                const rect = submenu.getBoundingClientRect();
+                if (rect.right > window.innerWidth) {
+                    submenu.classList.add('adjust-left');
+                } else {
+                    submenu.classList.remove('adjust-left');
+                }
+            });
+        });
+
+        // Prevent submenu overflow (avoid blinking)
+        document.querySelectorAll('.dropdown.relative').forEach(dropdown => {
+            dropdown.addEventListener('mouseenter', () => {
+                const submenu = dropdown.querySelector('.dropdown-submenu');
+                if (submenu) {
+                    submenu.classList.remove('adjust-left');
+                    submenu.style.display = 'block';
+                    const rect = submenu.getBoundingClientRect();
+                    submenu.style.display = '';
+                    if (rect.right > window.innerWidth) {
+                        submenu.classList.add('adjust-left');
+                    }
+                }
+            });
+        });
+    });
+</script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

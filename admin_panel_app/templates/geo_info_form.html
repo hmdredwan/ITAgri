@@ -1,0 +1,82 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Update Geo Info - IT Agri Admin{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Update Geo Info</h2>
+
+    {% if messages %}
+        <div class="mb-4 space-y-2">
+            {% for message in messages %}
+                <div class="bg-{% if message.tags == 'success' %}green{% else %}red{% endif %}-100 text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 p-4 rounded-lg flex items-center justify-between">
+                    <span>{{ message }}</span>
+                    <button type="button" class="text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-700 hover:text-{% if message.tags == 'success' %}green{% else %}red{% endif %}-900" onclick="this.parentElement.remove()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-md">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-4">
+            <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-4">
+            <label for="{{ form.pdf.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Upload PDF (optional)</label>
+            {{ form.pdf }}
+            {% if geo_info.pdf %}
+                <p class="text-gray-600 mt-2">Current: {{ geo_info.pdf.name }}</p>
+                <label class="inline-flex items-center mt-2">
+                    <input type="checkbox" name="delete_pdf" class="form-checkbox">
+                    <span class="ml-2 text-gray-700">Delete PDF</span>
+                </label>
+            {% endif %}
+        </div>
+        <div class="mb-4">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Images</h3>
+            {% if images %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                    {% for image in images %}
+                        <div class="relative">
+                            <img src="{{ image.image.url }}" alt="{{ image.caption|default:'Image' }}" class="w-full h-48 object-cover rounded-lg">
+                            <p class="text-gray-600 mt-2">{{ image.caption|default:'No caption' }}</p>
+                            <label class="inline-flex items-center mt-2">
+                                <input type="checkbox" name="delete_images" value="{{ image.id }}" class="form-checkbox">
+                                <span class="ml-2 text-red-600">Delete</span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div id="image-inputs" class="space-y-4">
+                <div class="image-input flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                    <input type="file" name="images" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                    <input type="text" name="image_captions" placeholder="Image caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+                </div>
+            </div>
+            <button type="button" id="add-image" class="mt-2 text-green-600 hover:underline">Add another image</button>
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save</button>
+        <a href="{% url 'admin_panel_app:admin_dashboard' %}" class="ml-2 text-gray-600 hover:underline">Cancel</a>
+    </form>
+</div>
+
+<script>
+    document.getElementById('add-image').addEventListener('click', () => {
+        const container = document.getElementById('image-inputs');
+        const newInput = document.createElement('div');
+        newInput.className = 'image-input flex flex-col sm:flex-row sm:items-center sm:space-x-4';
+        newInput.innerHTML = `
+            <input type="file" name="images" accept="image/*" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+            <input type="text" name="image_captions" placeholder="Image caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600">
+        `;
+        container.appendChild(newInput);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'it_agri_app/base.html' %}
+{% load static %}
+
+{% block title %}Web Development - IT Agri{% endblock %}
+
+{% block content %}
+<section class="bg-gray-100 py-12">
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">Web Development</h1>
+        <div class="bg-white p-8 rounded-lg shadow-md">
+            {% if web_development.description %}
+                <div class="prose max-w-none">
+                    {{ web_development.description|safe }}
+                </div>
+            {% else %}
+                <p class="text-gray-600 italic">No content available for Web Development.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
